@@ -1,10 +1,10 @@
 {
-    "name": "nature/think-swoole",
+    "name": "naturevict/think-swoole",
     "description": "Swoole extend for thinkphp",
     "license": "Apache-2.0",
     "authors": [
         {
-            "name": "nature",
+            "name": "naturevict",
             "email": "nature6016@gmail.com"
         }
     ],
