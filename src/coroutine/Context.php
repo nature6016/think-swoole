@@ -14,7 +14,7 @@ class Context
      * @param null $cid
      * @return Coroutine\Context
      */
-    public static function get($cid = null)
+    public static function get($cid = 0)
     {
         return Coroutine::getContext($cid);
     }
