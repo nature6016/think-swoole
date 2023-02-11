@@ -20,8 +20,8 @@ class Handler extends Websocket
 
     protected $eio;
 
-    protected $pingTimeoutTimer  = null;
-    protected $pingIntervalTimer = null;
+    protected $pingTimeoutTimer  = 0;
+    protected $pingIntervalTimer = 0;
 
     protected $pingInterval;
     protected $pingTimeout;
@@ -73,7 +73,9 @@ class Handler extends Websocket
     public function onMessage(Frame $frame)
     {
         $enginePacket = EnginePacket::fromString($frame->data);
-
+//print_r($frame);
+       // $enginePacket->fd=$frame->fd;
+        print_r($enginePacket);
         $this->event->trigger('swoole.websocket.Message', $enginePacket);
 
         $this->resetPingTimeout($this->pingInterval + $this->pingTimeout);
@@ -116,7 +118,7 @@ class Handler extends Websocket
                 $this->schedulePing();
                 break;
             default:
-                $this->close();
+              //  $this->close();
                 break;
         }
     }
