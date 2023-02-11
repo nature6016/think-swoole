@@ -46,20 +46,21 @@ class Handler extends Websocket
 
         $payload = json_encode(
             [
+                'fd'           =>$fd,
                 'sid'          => base64_encode(uniqid()),
                 'upgrades'     => [],
                 'pingInterval' => $this->pingInterval,
                 'pingTimeout'  => $this->pingTimeout,
             ]
         );
-
-        $this->push(EnginePacket::open($payload));
+        $this->push($payload);
+//        $this->push(EnginePacket::open($payload));
 
         $this->event->trigger('swoole.websocket.Open', $request);
 
         if ($this->eio < 4) {
             $this->resetPingTimeout($this->pingInterval + $this->pingTimeout);
-            $this->onConnect();
+            $this->onConnect($payload);
         } else {
             $this->schedulePing();
         }
@@ -73,10 +74,8 @@ class Handler extends Websocket
     public function onMessage(Frame $frame)
     {
         $enginePacket = EnginePacket::fromString($frame->data);
-//print_r($frame);
-       // $enginePacket->fd=$frame->fd;
-        print_r($enginePacket);
-        $this->event->trigger('swoole.websocket.Message', $enginePacket);
+        //2月12日注释$this->event->trigger('swoole.websocket.Message', $enginePacket);
+        $this->event->trigger('swoole.websocket.Message', $frame);
 
         $this->resetPingTimeout($this->pingInterval + $this->pingTimeout);
 
@@ -133,7 +132,8 @@ class Handler extends Websocket
     {
         Timer::clear($this->pingTimeoutTimer);
         Timer::clear($this->pingIntervalTimer);
-        $this->event->trigger('swoole.websocket.Close', $reactorId);
+        //2月12日修改$this->event->trigger('swoole.websocket.Close', $reactorId);
+        $this->event->trigger('swoole.websocket.Close', $fd);
     }
 
     protected function onConnect($data = null)
@@ -194,7 +194,8 @@ class Handler extends Websocket
     public function emit(string $event, ...$data): bool
     {
         $packet = Packet::create(Packet::EVENT, [
-            'data' => array_merge([$event], $data),
+            //2月12日修改'data' => array_merge([$event], $data),
+            'data' => array_merge(['type'=>$event,'data'=>$data]),
         ]);
         return $this->push($packet);
     }
